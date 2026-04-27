@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aqua Merry Atelier | Julliane | Aquarela & Pintura ao Vivo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blush: #f2e4d8;
+      --rose: #d4a59a;
+      --dusty-peach: #e8c9b8;
+      --sage: #b5c4b1;
+      --warm-gold: #c9956a;
+      --deep: #4a3728;
+      --ink: #2e1f15;
+      --cream: #faf6f1;
+      --white: #ffffff;
+      --mist: #f7f0ea;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Custom cursor */
+    .cursor {
+      width: 18px; height: 18px;
+      border: 1.5px solid var(--rose);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.15s ease, opacity 0.2s;
+      mix-blend-mode: multiply;
+    }
+    .cursor-dot {
+      width: 5px; height: 5px;
+      background: var(--warm-gold);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+    }
+
+    /* ── WATERCOLOR SVG BLOBS ── */
+    .blob-bg {
+      position: absolute;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.45;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.4rem 5vw;
+      backdrop-filter: blur(14px);
+      background: rgba(250, 246, 241, 0.82);
+      border-bottom: 1px solid rgba(212, 165, 154, 0.18);
+      transition: background 0.3s;
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--deep);
+      letter-spacing: 0.06em;
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--rose); font-style: italic; }
+    .nav-links { display: flex; gap: 2.2rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--deep);
+      text-decoration: none;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .nav-links a:hover { opacity: 1; }
+    .nav-cta {
+      font-size: 0.76rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.55rem 1.5rem;
+      border: 1px solid var(--rose);
+      color: var(--rose);
+      text-decoration: none;
+      border-radius: 50px;
+      transition: all 0.25s;
+    }
+    .nav-cta:hover { background: var(--rose); color: white; }
+    .hamburger { display: none; cursor: pointer; flex-direction: column; gap: 5px; }
+    .hamburger span { width: 24px; height: 1.5px; background: var(--deep); display: block; transition: all 0.3s; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+      overflow: hidden;
+      padding-top: 80px;
+    }
+    .hero-left {
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: 6vw 5vw 6vw 8vw;
+      position: relative; z-index: 2;
+    }
+    .hero-eyebrow {
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--rose);
+      margin-bottom: 1.2rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.3s forwards;
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      line-height: 1.0;
+      font-weight: 300;
+      color: var(--deep);
+      margin-bottom: 1.6rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.5s forwards;
+    }
+    .hero-title em { font-style: italic; color: var(--rose); }
+    .hero-subtitle {
+      font-size: 1.02rem;
+      line-height: 1.8;
+      color: var(--deep);
+      opacity: 0.65;
+      max-width: 400px;
+      margin-bottom: 2.6rem;
+      animation: fadeUp 0.8s 0.7s forwards;
+      opacity: 0;
+    }
+    .hero-actions {
+      display: flex; gap: 1.2rem; align-items: center;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.9s forwards;
+    }
+    .btn-primary {
+      padding: 0.9rem 2.2rem;
+      background: var(--warm-gold);
+      color: white;
+      text-decoration: none;
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      border-radius: 50px;
+      transition: all 0.25s;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary:hover { background: var(--deep); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(74,55,40,0.18); }
+    .btn-secondary {
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--deep);
+      text-decoration: none;
+      opacity: 0.65;
+      border-bottom: 1px solid var(--rose);
+      padding-bottom: 2px;
+      transition: opacity 0.2s;
+    }
+    .btn-secondary:hover { opacity: 1; }
+
+    .hero-right {
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeIn 1.2s 0.4s forwards;
+    }
+    .hero-image-wrap {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hero-image-frame {
+      width: 72%; aspect-ratio: 3/4;
+      border-radius: 40% 60% 55% 45% / 45% 40% 60% 55%;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 30px 80px rgba(74,55,40,0.14);
+    }
+    .hero-image-frame img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      filter: saturate(0.9) brightness(1.02);
+    }
+    .hero-badge {
+      position: absolute;
+      bottom: 10%; right: 6%;
+      background: white;
+      border-radius: 16px;
+      padding: 1.1rem 1.4rem;
+      box-shadow: 0 12px 40px rgba(74,55,40,0.12);
+      font-size: 0.78rem;
+      line-height: 1.5;
+      text-align: center;
+    }
+    .hero-badge strong {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      color: var(--rose);
+      line-height: 1;
+    }
+
+    /* Watercolor blobs */
+    .blob1 { top: -5%; right: -8%; width: 55%; }
+    .blob2 { bottom: -10%; left: -5%; width: 45%; }
+
+    /* ── DIVIDER ── */
+    .section-divider {
+      text-align: center;
+      padding: 1rem 0;
+      opacity: 0.3;
+      font-size: 1.4rem;
+      letter-spacing: 0.3em;
+      color: var(--rose);
+    }
+
+    /* ── ABOUT ── */
+    #sobre {
+      padding: 8rem 8vw;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 8vw;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .about-images {
+      position: relative;
+      height: 560px;
+    }
+    .about-img {
+      position: absolute;
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(74,55,40,0.12);
+    }
+    .about-img img { width: 100%; height: 100%; object-fit: cover; }
+    .about-img-1 { width: 62%; left: 0; top: 0; aspect-ratio: 4/5; border-radius: 50% 40% 50% 40% / 40% 50% 40% 50%; }
+    .about-img-2 { width: 52%; right: 0; bottom: 0; aspect-ratio: 1; border-radius: 40% 60% 40% 60% / 50% 40% 60% 40%; }
+    .about-dot {
+      position: absolute;
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      background: var(--dusty-peach);
+      opacity: 0.5;
+      top: 40%; left: 35%;
+      z-index: -1;
+    }
+    .section-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--rose);
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 3.5vw, 3.4rem);
+      line-height: 1.15;
+      font-weight: 300;
+      color: var(--deep);
+      margin-bottom: 1.4rem;
+    }
+    .section-title em { font-style: italic; color: var(--rose); }
+    .section-body {
+      font-size: 0.96rem;
+      line-height: 1.9;
+      color: var(--deep);
+      opacity: 0.7;
+      margin-bottom: 1.2rem;
+    }
+    .signature {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-style: italic;
+      color: var(--warm-gold);
+      margin-top: 1.5rem;
+    }
+
+    /* ── SERVICES ── */
+    #servicos {
+      padding: 7rem 8vw;
+      background: var(--mist);
+      position: relative;
+      overflow: hidden;
+    }
+    .services-header {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 4.5rem;
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+    .service-card {
+      background: white;
+      border-radius: 24px;
+      padding: 2.8rem 2.2rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+      border: 1px solid rgba(212,165,154,0.15);
+    }
+    .service-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 60px rgba(74,55,40,0.1);
+    }
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: -30px; right: -30px;
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      opacity: 0.12;
+    }
+    .service-card:nth-child(1)::before { background: var(--rose); }
+    .service-card:nth-child(2)::before { background: var(--warm-gold); }
+    .service-card:nth-child(3)::before { background: var(--sage); }
+    .service-icon {
+      font-size: 2.4rem;
+      margin-bottom: 1.2rem;
+      display: block;
+    }
+    .service-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.55rem;
+      font-weight: 400;
+      color: var(--deep);
+      margin-bottom: 0.8rem;
+    }
+    .service-card p {
+      font-size: 0.88rem;
+      line-height: 1.8;
+      color: var(--deep);
+      opacity: 0.65;
+    }
+    .service-tags {
+      margin-top: 1.3rem;
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+    }
+    .tag {
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.8rem;
+      border-radius: 50px;
+      background: var(--blush);
+      color: var(--deep);
+      opacity: 0.75;
+    }
+
+    /* ── PORTFOLIO ── */
+    #portfolio {
+      padding: 7rem 8vw;
+      position: relative;
+    }
+    .portfolio-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-bottom: 3.5rem;
+    }
+    .portfolio-header a {
+      font-size: 0.76rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--rose);
+      text-decoration: none;
+      border-bottom: 1px solid var(--rose);
+      padding-bottom: 2px;
+    }
+    .masonry {
+      columns: 3;
+      column-gap: 1.2rem;
+    }
+    .masonry-item {
+      break-inside: avoid;
+      margin-bottom: 1.2rem;
+      border-radius: 18px;
+      overflow: hidden;
+      position: relative;
+      cursor: none;
+    }
+    .masonry-item:hover .masonry-overlay { opacity: 1; }
+    .masonry-item img {
+      width: 100%;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    .masonry-item:hover img { transform: scale(1.04); }
+    .masonry-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(74,55,40,0.6), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+      display: flex; align-items: flex-end;
+      padding: 1.5rem;
+    }
+    .masonry-overlay span {
+      color: white;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-style: italic;
+    }
+
+    /* Placeholder gallery images using gradients */
+    .img-placeholder {
+      background: linear-gradient(135deg, var(--blush), var(--dusty-peach));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem;
+    }
+
+    /* ── TESTIMONIALS ── */
+    #depoimentos {
+      padding: 7rem 8vw;
+      background: var(--deep);
+      position: relative;
+      overflow: hidden;
+    }
+    #depoimentos .section-label { color: var(--dusty-peach); }
+    #depoimentos .section-title { color: var(--cream); }
+    #depoimentos .section-title em { color: var(--dusty-peach); }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-top: 3.5rem;
+    }
+    .testimonial-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 2.2rem;
+      position: relative;
+    }
+    .testimonial-card::before {
+      content: '"';
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 5rem;
+      color: var(--rose);
+      opacity: 0.4;
+      line-height: 1;
+      position: absolute;
+      top: 1rem; left: 1.8rem;
+    }
+    .testimonial-text {
+      font-size: 0.9rem;
+      line-height: 1.85;
+      color: rgba(255,255,255,0.75);
+      padding-top: 2rem;
+    }
+    .testimonial-author {
+      margin-top: 1.4rem;
+      display: flex; align-items: center; gap: 0.9rem;
+    }
+    .author-avatar {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--rose), var(--warm-gold));
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      color: white;
+    }
+    .author-info strong {
+      display: block;
+      color: white;
+      font-size: 0.88rem;
+      font-weight: 500;
+    }
+    .author-info span {
+      font-size: 0.76rem;
+      color: rgba(255,255,255,0.45);
+    }
+
+    /* ── PROCESS ── */
+    #processo {
+      padding: 7rem 8vw;
+      position: relative;
+    }
+    .process-header { text-align: center; max-width: 600px; margin: 0 auto 4rem; }
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      position: relative;
+    }
+    .process-steps::before {
+      content: '';
+      position: absolute;
+      top: 28px; left: 12.5%; right: 12.5%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--rose), var(--warm-gold), var(--rose), transparent);
+      z-index: 0;
+    }
+    .process-step {
+      text-align: center;
+      padding: 0 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+    .step-number {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: white;
+      border: 1.5px solid var(--rose);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      color: var(--rose);
+    }
+    .process-step h4 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      color: var(--deep);
+      margin-bottom: 0.6rem;
+    }
+    .process-step p {
+      font-size: 0.82rem;
+      line-height: 1.7;
+      color: var(--deep);
+      opacity: 0.6;
+    }
+
+    /* ── CONTACT ── */
+    #contato {
+      padding: 7rem 8vw;
+      background: var(--mist);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8vw;
+      align-items: center;
+    }
+    .contact-info .section-body { margin-bottom: 2rem; }
+    .contact-list { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
+    .contact-list li {
+      display: flex; align-items: center; gap: 1rem;
+      font-size: 0.9rem;
+      color: var(--deep);
+      opacity: 0.75;
+    }
+    .contact-list li .icon { font-size: 1.2rem; }
+    .contact-form { display: flex; flex-direction: column; gap: 1.1rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-group label {
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--deep);
+      opacity: 0.55;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      padding: 0.85rem 1.2rem;
+      border: 1px solid rgba(212,165,154,0.35);
+      border-radius: 12px;
+      background: white;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.9rem;
+      color: var(--deep);
+      outline: none;
+      transition: border-color 0.2s;
+      resize: none;
+      appearance: none;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus { border-color: var(--rose); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink);
+      padding: 3rem 8vw;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1.5rem;
+    }
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      color: var(--cream);
+      font-weight: 600;
+    }
+    .footer-logo span { color: var(--rose); font-style: italic; }
+    .footer-copy {
+      font-size: 0.76rem;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.06em;
+    }
+    .footer-socials { display: flex; gap: 1rem; }
+    .footer-socials a {
+      width: 38px; height: 38px;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    .footer-socials a:hover { border-color: var(--rose); color: var(--rose); }
+
+    /* ── FLOATING WA BUTTON ── */
+    .whatsapp-float {
+      position: fixed;
+      bottom: 2.2rem; right: 2.2rem;
+      z-index: 200;
+      width: 56px; height: 56px;
+      background: #25D366;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 24px rgba(37,211,102,0.35);
+      text-decoration: none;
+      transition: transform 0.25s, box-shadow 0.25s;
+      animation: pulse 2.5s infinite;
+    }
+    .whatsapp-float:hover { transform: scale(1.1); box-shadow: 0 12px 32px rgba(37,211,102,0.45); }
+    .whatsapp-float svg { width: 28px; height: 28px; fill: white; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 8px 24px rgba(37,211,102,0.35); }
+      50% { box-shadow: 0 8px 40px rgba(37,211,102,0.55); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 900px) {
+      #hero { grid-template-columns: 1fr; min-height: auto; padding-bottom: 4rem; }
+      .hero-right { height: 55vw; margin-top: 2rem; }
+      .hero-left { padding: 2rem 6vw; }
+      #sobre { grid-template-columns: 1fr; }
+      .about-images { height: 360px; }
+      .services-grid { grid-template-columns: 1fr; }
+      .masonry { columns: 2; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .process-steps { grid-template-columns: repeat(2, 1fr); }
+      .process-steps::before { display: none; }
+      #contato { grid-template-columns: 1fr; }
+      nav .nav-links, nav .nav-cta { display: none; }
+      .hamburger { display: flex; }
+    }
+    @media (max-width: 560px) {
+      .masonry { columns: 1; }
+      .portfolio-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    /* ── GALLERY ITEMS (using emoji + gradients as placeholders) ── */
+    .gallery-a { aspect-ratio: 4/5; }
+    .gallery-b { aspect-ratio: 3/4; }
+    .gallery-c { aspect-ratio: 1/1; }
+    .gallery-d { aspect-ratio: 3/5; }
+    .gallery-e { aspect-ratio: 4/3; }
+    .gallery-f { aspect-ratio: 2/3; }
+
+    .g1 { background: linear-gradient(145deg, #f2d4c8 0%, #e8b5a2 50%, #d4a08c 100%); }
+    .g2 { background: linear-gradient(145deg, #d4c5e2 0%, #c4b0d5 50%, #b59dc8 100%); }
+    .g3 { background: linear-gradient(145deg, #c8dfd4 0%, #a8c8b8 50%, #8ab5a0 100%); }
+    .g4 { background: linear-gradient(145deg, #f5e4c8 0%, #e8d0a0 50%, #d4b878 100%); }
+    .g5 { background: linear-gradient(145deg, #f0c8d4 0%, #e8a8b8 50%, #d4889c 100%); }
+    .g6 { background: linear-gradient(145deg, #c8d8f0 0%, #a8c0e8 50%, #88a8d4 100%); }
+
+    .gallery-emoji {
+      font-size: 3.5rem;
+      opacity: 0.4;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-dot" id="cursorDot"></div>
+
+  <!-- WhatsApp Float -->
+  <a href="https://wa.me/5541999999999?text=Olá%2C%20Julliane!%20Vi%20seu%20site%20e%20gostaria%20de%20saber%20mais%20sobre%20a%20pintura%20ao%20vivo." class="whatsapp-float" target="_blank" aria-label="WhatsApp">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+  </a>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="#hero" class="nav-logo">Aqua<span>Merry</span></a>
+    <ul class="nav-links">
+      <li><a href="#sobre">Sobre</a></li>
+      <li><a href="#servicos">Serviços</a></li>
+      <li><a href="#portfolio">Portfólio</a></li>
+      <li><a href="#depoimentos">Depoimentos</a></li>
+      <li><a href="#contato">Contato</a></li>
+    </ul>
+    <a href="#contato" class="nav-cta">Solicitar orçamento</a>
+    <div class="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <!-- Blobs -->
+    <svg class="blob-bg blob1" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="blur1"><feGaussianBlur stdDeviation="30"/></filter>
+      </defs>
+      <ellipse cx="300" cy="280" rx="260" ry="220" fill="#e8c9b8" filter="url(#blur1)" transform="rotate(-20 300 280)"/>
+      <ellipse cx="340" cy="320" rx="180" ry="150" fill="#d4a59a" filter="url(#blur1)" opacity="0.6"/>
+    </svg>
+    <svg class="blob-bg blob2" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="blur2"><feGaussianBlur stdDeviation="28"/></filter>
+      </defs>
+      <ellipse cx="250" cy="260" rx="210" ry="190" fill="#b5c4b1" filter="url(#blur2)" transform="rotate(15 250 260)"/>
+    </svg>
+
+    <div class="hero-left">
+      <p class="hero-eyebrow">✦ Aquarela & Pintura ao Vivo · Curitiba</p>
+      <h1 class="hero-title">
+        Arte que<br>
+        <em>eterniza</em><br>
+        momentos
+      </h1>
+      <p class="hero-subtitle">
+        Transformo celebrações em obras de arte únicas. Cada pincelada captura a emoção, o amor e os detalhes que só acontecem uma vez.
+      </p>
+      <div class="hero-actions">
+        <a href="#contato" class="btn-primary">Quero no meu evento</a>
+        <a href="#portfolio" class="btn-secondary">Ver portfólio</a>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="hero-image-wrap">
+        <div class="hero-image-frame">
+          <!-- Profile photo from Instagram -->
+          <div style="width:100%;height:100%;background:linear-gradient(160deg,#f2e4d8,#d4a59a,#c9956a);display:flex;align-items:center;justify-content:center;font-size:5rem;">🎨</div>
+        </div>
+        <div class="hero-badge">
+          <strong>+5mil</strong>
+          pessoas retratadas<br>
+          <small style="color:var(--rose);font-size:0.68rem;letter-spacing:0.08em;">em todo o Brasil ✦</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider">· · ·</div>
+
+  <!-- SOBRE -->
+  <section id="sobre">
+    <div class="about-images reveal">
+      <div class="about-img about-img-1">
+        <div style="width:100%;height:100%;background:linear-gradient(145deg,#f2d4c8,#d4a59a);display:flex;align-items:center;justify-content:center;font-size:4rem;">🖌️</div>
+      </div>
+      <div class="about-img about-img-2">
+        <div style="width:100%;height:100%;background:linear-gradient(145deg,#c8dfd4,#8ab5a0);display:flex;align-items:center;justify-content:center;font-size:3rem;">💍</div>
+      </div>
+      <div class="about-dot"></div>
+    </div>
+    <div class="reveal">
+      <p class="section-label">Sobre a artista</p>
+      <h2 class="section-title">Olá, eu sou a <em>Julliane</em></h2>
+      <p class="section-body">
+        Artista por amor e criadora de pinturas que eternizam momentos, pessoas, lugares e pets. Nascida em Curitiba, encontrei na aquarela a linguagem que fala direto ao coração.
+      </p>
+      <p class="section-body">
+        Minha missão é transformar emoções em arte — pintando o amor, o encanto e os detalhes únicos de cada celebração. Cada pincelada é uma forma de contar histórias que duram para sempre.
+      </p>
+      <p class="section-body">
+        Amo eternizar momentos através da pintura ao vivo em casamentos, eventos corporativos e sociais, e também por encomenda, para que cada detalhe do seu momento vire arte.
+      </p>
+      <div class="signature">Julliane ♡</div>
+    </div>
+  </section>
+
+  <!-- DUO -->
+  <section id="duo" style="padding:6rem 8vw;background:var(--mist);position:relative;overflow:hidden;">
+    <svg class="blob-bg" style="top:-20%;left:-5%;width:40%;opacity:0.25;" viewBox="0 0 400 400">
+      <defs><filter id="bd1"><feGaussianBlur stdDeviation="40"/></filter></defs>
+      <circle cx="200" cy="200" r="180" fill="#b5c4b1" filter="url(#bd1)"/>
+    </svg>
+    <div style="max-width:960px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:6vw;align-items:center;" class="reveal">
+      <div>
+        <p class="section-label">Por trás da arte</p>
+        <h2 class="section-title">Uma dupla feita <em>para criar</em></h2>
+        <p class="section-body">
+          Por trás de cada obra ao vivo existe uma parceria especial. Enquanto a Julliane pinta em aquarela capturando a emoção de cada cena, o <strong style="color:var(--deep);font-weight:500;">Jhonathan</strong> — seu noivo — está ao lado desenhando os convidados para que ela possa imprimir a marca e eternizar cada rosto com ainda mais agilidade e cuidado.
+        </p>
+        <p class="section-body">
+          É uma dança silenciosa entre os dois: ele esboça, ela coloriza e dá vida. Juntos, conseguem retratar muito mais pessoas e tornar a experiência ainda mais envolvente para quem está no evento.
+        </p>
+        <div style="display:flex;gap:2rem;margin-top:2rem;flex-wrap:wrap;">
+          <div style="text-align:center;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:2.4rem;color:var(--rose);line-height:1;">+5mil</div>
+            <div style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--deep);opacity:0.55;margin-top:0.3rem;">pessoas retratadas</div>
+          </div>
+          <div style="width:1px;background:rgba(212,165,154,0.3);"></div>
+          <div style="text-align:center;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:2.4rem;color:var(--rose);line-height:1;">2</div>
+            <div style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--deep);opacity:0.55;margin-top:0.3rem;">artistas, 1 história</div>
+          </div>
+          <div style="width:1px;background:rgba(212,165,154,0.3);"></div>
+          <div style="text-align:center;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:2.4rem;color:var(--rose);line-height:1;">∞</div>
+            <div style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--deep);opacity:0.55;margin-top:0.3rem;">memórias criadas</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1.2rem;">
+        <div style="background:white;border-radius:20px;padding:1.8rem;display:flex;align-items:center;gap:1.4rem;box-shadow:0 8px 32px rgba(74,55,40,0.07);border:1px solid rgba(212,165,154,0.15);">
+          <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#f2d4c8,#d4a59a);display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;">🎨</div>
+          <div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--deep);margin-bottom:0.3rem;">Julliane</div>
+            <div style="font-size:0.82rem;color:var(--deep);opacity:0.6;line-height:1.5;">Artista principal — pinta em aquarela ao vivo, coloriza e finaliza cada obra com sensibilidade única.</div>
+          </div>
+        </div>
+        <div style="text-align:center;color:var(--rose);font-size:1.4rem;opacity:0.5;letter-spacing:0.3em;">♡</div>
+        <div style="background:white;border-radius:20px;padding:1.8rem;display:flex;align-items:center;gap:1.4rem;box-shadow:0 8px 32px rgba(74,55,40,0.07);border:1px solid rgba(212,165,154,0.15);">
+          <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#c8d8e8,#8aaac4);display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;">✏️</div>
+          <div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--deep);margin-bottom:0.3rem;">Jhonathan</div>
+            <div style="font-size:0.82rem;color:var(--deep);opacity:0.6;line-height:1.5;">Ao lado dela em cada evento — esboça os convidados para que Julliane possa imprimir a marca e retratar ainda mais pessoas.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVIÇOS -->
+  <section id="servicos">
+    <svg class="blob-bg" style="top:-20%;right:-10%;width:40%;opacity:0.2;" viewBox="0 0 400 400">
+      <defs><filter id="b3"><feGaussianBlur stdDeviation="40"/></filter></defs>
+      <circle cx="200" cy="200" r="180" fill="#d4a59a" filter="url(#b3)"/>
+    </svg>
+    <div class="services-header reveal">
+      <p class="section-label">O que eu faço</p>
+      <h2 class="section-title">Serviços <em>únicos</em> para momentos que importam</h2>
+    </div>
+    <div class="services-grid reveal">
+      <div class="service-card">
+        <span class="service-icon">💒</span>
+        <h3>Pintura ao Vivo</h3>
+        <p>Durante o seu evento, retrato convidados e cenas especiais em aquarela. Uma atração delicada que encanta e cria memórias afetivas inesquecíveis.</p>
+        <div class="service-tags">
+          <span class="tag">Casamentos</span>
+          <span class="tag">Aniversários</span>
+          <span class="tag">Formaturas</span>
+          <span class="tag">Corporativos</span>
+        </div>
+      </div>
+      <div class="service-card">
+        <span class="service-icon">🎨</span>
+        <h3>Encomendas</h3>
+        <p>Pinturas personalizadas de pessoas, lugares, pets e momentos especiais. Cada obra é única, feita à mão com cuidado e sensibilidade.</p>
+        <div class="service-tags">
+          <span class="tag">Retratos</span>
+          <span class="tag">Pets</span>
+          <span class="tag">Lugares</span>
+          <span class="tag">Presentes</span>
+        </div>
+      </div>
+      <div class="service-card">
+        <span class="service-icon">🌿</span>
+        <h3>Árvore de Digitais</h3>
+        <p>Uma obra coletiva e viva — cada convidado deixa sua marca e juntos criam uma memória afetiva que você guardará para sempre.</p>
+        <div class="service-tags">
+          <span class="tag">Casamentos</span>
+          <span class="tag">Chá de Bebê</span>
+          <span class="tag">Festas</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section id="portfolio">
+    <div class="portfolio-header reveal">
+      <div>
+        <p class="section-label">Portfólio</p>
+        <h2 class="section-title">Cada obra,<br>uma <em>história</em></h2>
+      </div>
+      <a href="https://www.instagram.com/aqua.merry/" target="_blank">Ver no Instagram →</a>
+    </div>
+    <div class="masonry reveal">
+      <div class="masonry-item gallery-a">
+        <div class="img-placeholder gallery-emoji g1" style="height:340px;">🎨</div>
+        <div class="masonry-overlay"><span>Casamento ao vivo</span></div>
+      </div>
+      <div class="masonry-item gallery-c">
+        <div class="img-placeholder gallery-emoji g3" style="height:240px;">💍</div>
+        <div class="masonry-overlay"><span>Retrato de noivos</span></div>
+      </div>
+      <div class="masonry-item gallery-b">
+        <div class="img-placeholder gallery-emoji g5" style="height:300px;">🌸</div>
+        <div class="masonry-overlay"><span>Evento corporativo</span></div>
+      </div>
+      <div class="masonry-item gallery-e">
+        <div class="img-placeholder gallery-emoji g4" style="height:220px;">✨</div>
+        <div class="masonry-overlay"><span>Árvore de digitais</span></div>
+      </div>
+      <div class="masonry-item gallery-d">
+        <div class="img-placeholder gallery-emoji g2" style="height:380px;">🖌️</div>
+        <div class="masonry-overlay"><span>Convidados em aquarela</span></div>
+      </div>
+      <div class="masonry-item gallery-f">
+        <div class="img-placeholder gallery-emoji g6" style="height:260px;">🐾</div>
+        <div class="masonry-overlay"><span>Retrato de pet</span></div>
+      </div>
+      <div class="masonry-item gallery-c">
+        <div class="img-placeholder gallery-emoji g1" style="height:260px;">💌</div>
+        <div class="masonry-overlay"><span>Encomenda especial</span></div>
+      </div>
+      <div class="masonry-item gallery-a">
+        <div class="img-placeholder gallery-emoji g3" style="height:320px;">🥂</div>
+        <div class="masonry-overlay"><span>Formatura</span></div>
+      </div>
+      <div class="masonry-item gallery-b">
+        <div class="img-placeholder gallery-emoji g5" style="height:280px;">🎊</div>
+        <div class="masonry-overlay"><span>Aniversário</span></div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:2.5rem;opacity:0.5;font-size:0.82rem;letter-spacing:0.1em;">
+      * Substitua as imagens acima pelas suas fotos reais das obras
+    </div>
+  </section>
+
+  <!-- DEPOIMENTOS -->
+  <section id="depoimentos">
+    <svg class="blob-bg" style="bottom:-20%;left:-10%;width:50%;opacity:0.08;" viewBox="0 0 500 500">
+      <defs><filter id="b4"><feGaussianBlur stdDeviation="50"/></filter></defs>
+      <circle cx="250" cy="250" r="220" fill="#d4a59a" filter="url(#b4)"/>
+    </svg>
+    <div style="text-align:center;" class="reveal">
+      <p class="section-label">Depoimentos</p>
+      <h2 class="section-title" style="color:var(--cream);">O que dizem <em>sobre</em> a experiência</h2>
+    </div>
+    <div class="testimonials-grid reveal">
+      <div class="testimonial-card">
+        <p class="testimonial-text">
+          "A Julliane transformou o nosso casamento em algo ainda mais especial. Os convidados ficavam curiosos, voltavam para ver as pinturas… foi uma atração que conectou todo mundo de verdade."
+        </p>
+        <div class="testimonial-author">
+          <div class="author-avatar">A</div>
+          <div class="author-info">
+            <strong>Adriane & Junior</strong>
+            <span>Casamento · Curitiba</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text">
+          "Cada convidado levou para casa uma obra única. Não é uma lembrancinha qualquer — é arte feita com emoção e cuidado. Nossos convidados adoraram e vão guardar para sempre."
+        </p>
+        <div class="testimonial-author">
+          <div class="author-avatar">B</div>
+          <div class="author-info">
+            <strong>Bianca & Pedro</strong>
+            <span>Casamento · Curitiba</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text">
+          "Levar a arte ao vivo para o nosso evento foi incrível. A Julliane é uma artista extraordinária — ela captura a emoção de cada momento com uma delicadeza única."
+        </p>
+        <div class="testimonial-author">
+          <div class="author-avatar">P</div>
+          <div class="author-info">
+            <strong>Prêmio Aprende Brasil</strong>
+            <span>Evento Corporativo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESSO -->
+  <section id="processo">
+    <div class="process-header reveal">
+      <p class="section-label">Como funciona</p>
+      <h2 class="section-title">Do contato à <em>obra</em> entregue</h2>
+    </div>
+    <div class="process-steps reveal">
+      <div class="process-step">
+        <div class="step-number">1</div>
+        <h4>Entre em contato</h4>
+        <p>Me envie uma mensagem com a data, local e tipo do seu evento. Responderei em até 24h.</p>
+      </div>
+      <div class="process-step">
+        <div class="step-number">2</div>
+        <h4>Planejamento</h4>
+        <p>Conversamos sobre os detalhes, estilo e expectativas para que tudo seja perfeito.</p>
+      </div>
+      <div class="process-step">
+        <div class="step-number">3</div>
+        <h4>O grande dia</h4>
+        <p>Chego ao seu evento, instalo meu espaço e começo a retratar tudo em aquarela.</p>
+      </div>
+      <div class="process-step">
+        <div class="step-number">4</div>
+        <h4>Obra entregue</h4>
+        <p>Cada convidado leva sua obra única para casa — uma memória eternizada em arte.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTATO -->
+  <section id="contato">
+    <div class="contact-info reveal">
+      <p class="section-label">Vamos conversar</p>
+      <h2 class="section-title">Leve a <em>arte</em> para o seu evento</h2>
+      <p class="section-body">
+        Casamentos, aniversários, formaturas, eventos corporativos e sociais — cada celebração merece ser eternizada. Entre em contato e vamos planejar juntos!
+      </p>
+      <ul class="contact-list">
+        <li><span class="icon">📍</span> Curitiba, Paraná</li>
+        <li><span class="icon">📸</span> @aqua.merry no Instagram</li>
+        <li><span class="icon">💬</span> Atendimento via Direct & WhatsApp</li>
+        <li><span class="icon">✈️</span> Viagens para eventos em todo o Brasil</li>
+      </ul>
+    </div>
+    <div class="contact-form reveal">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Seu nome</label>
+          <input type="text" placeholder="Maria Silva" />
+        </div>
+        <div class="form-group">
+          <label>WhatsApp</label>
+          <input type="tel" placeholder="(41) 9 9999-9999" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Tipo de evento</label>
+        <select>
+          <option value="">Selecione...</option>
+          <option>Casamento</option>
+          <option>Aniversário</option>
+          <option>Formatura</option>
+          <option>Evento corporativo</option>
+          <option>Chá de bebê / revelação</option>
+          <option>Encomenda personalizada</option>
+          <option>Outro</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Data do evento</label>
+          <input type="date" />
+        </div>
+        <div class="form-group">
+          <label>Cidade</label>
+          <input type="text" placeholder="Curitiba, PR" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Mensagem</label>
+        <textarea rows="4" placeholder="Conte mais sobre o seu evento e o que você imagina..."></textarea>
+      </div>
+      <button class="btn-primary" onclick="sendWhatsApp()" style="width:100%;padding:1.1rem;font-size:0.85rem;">
+        Enviar mensagem ✦
+      </button>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Aqua<span>Merry</span></div>
+    <p class="footer-copy">© 2025 Aqua Merry Atelier by Julliane · Todos os direitos reservados</p>
+    <div class="footer-socials">
+      <a href="https://www.instagram.com/aqua.merry/" target="_blank" title="Instagram">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      </a>
+    </div>
+  </footer>
+
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const dot = document.getElementById('cursorDot');
+    let cx = 0, cy = 0;
+    document.addEventListener('mousemove', e => {
+      dot.style.left = e.clientX + 'px';
+      dot.style.top = e.clientY + 'px';
+      cx += (e.clientX - cx) * 0.12;
+      cy += (e.clientY - cy) * 0.12;
+      cursor.style.left = cx + 'px';
+      cursor.style.top = cy + 'px';
+    });
+    function animateCursor() {
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+    document.querySelectorAll('a, button, .masonry-item, .service-card').forEach(el => {
+      el.addEventListener('mouseenter', () => { cursor.style.transform = 'translate(-50%,-50%) scale(2)'; cursor.style.opacity = '0.5'; });
+      el.addEventListener('mouseleave', () => { cursor.style.transform = 'translate(-50%,-50%) scale(1)'; cursor.style.opacity = '1'; });
+    });
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 80);
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Mobile menu
+    function toggleMenu() {
+      const links = document.querySelector('.nav-links');
+      const cta = document.querySelector('.nav-cta');
+      if (links.style.display === 'flex') {
+        links.style.display = '';
+        cta.style.display = '';
+      } else {
+        links.style.display = 'flex';
+        links.style.flexDirection = 'column';
+        links.style.position = 'fixed';
+        links.style.top = '70px';
+        links.style.left = '0'; links.style.right = '0';
+        links.style.background = 'var(--cream)';
+        links.style.padding = '2rem 8vw';
+        links.style.gap = '1.5rem';
+        links.style.borderBottom = '1px solid rgba(212,165,154,0.2)';
+        cta.style.display = '';
+      }
+    }
+
+    // WhatsApp form
+    function sendWhatsApp() {
+      const name = document.querySelector('input[placeholder="Maria Silva"]').value;
+      const phone = document.querySelector('input[placeholder="(41) 9 9999-9999"]').value;
+      const type = document.querySelector('select').value;
+      const date = document.querySelector('input[type="date"]').value;
+      const city = document.querySelector('input[placeholder="Curitiba, PR"]').value;
+      const msg = document.querySelector('textarea').value;
+      const text = `Olá, Julliane! 🎨\n\nMeu nome é ${name||'(não informado)'}.\nEvento: ${type||'(não informado)'}\nData: ${date||'(não informado)'}\nCidade: ${city||'(não informado)'}\n\nMensagem: ${msg||'(sem mensagem)'}\n\nContato: ${phone||'(não informado)'}`;
+      window.open(`https://wa.me/5541999999999?text=${encodeURIComponent(text)}`, '_blank');
+    }
+  </script>
+</body>
+</html>
