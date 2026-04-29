@@ -100,6 +100,12 @@
   footer { text-align: center; padding: 2rem 1rem; font-size: 11px; color: var(--text-muted); opacity: .6; letter-spacing: .06em; }
   footer span { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 13px; }
   .hidden { display: none !important; }
+  .agenda-ok { background: rgba(45,106,79,0.08) !important; border-color: rgba(45,106,79,0.3) !important; color: #2d6a4f; }
+  .agenda-busy { background: rgba(155,35,53,0.07) !important; border-color: rgba(155,35,53,0.25) !important; color: #7a1a25; }
+  .agenda-loading { background: var(--blush) !important; color: var(--text-muted); }
+  .agenda-event-item { margin-top:6px; padding:6px 10px; border-radius:6px; background:rgba(92,61,53,0.05); font-size:12px; }
+  .agenda-event-title { font-weight:500; color:var(--text); }
+  .agenda-event-time { color:var(--text-muted); font-size:11px; margin-top:1px; }
 </style>
 </head>
 <body>
@@ -134,13 +140,17 @@
       <div class="field"><label>Destino</label><input type="text" id="destino" placeholder="ex: São Paulo"></div>
     </div>
     <div class="grid-2">
-      <div class="field"><label>Data de ida</label><input type="date" id="data-ida" oninput="calc()"></div>
-      <div class="field"><label>Data de volta</label><input type="date" id="data-volta" oninput="calc()"></div>
+      <div class="field"><label>Data de ida</label><input type="date" id="data-ida" oninput="calc();showAgendaBtn()"></div>
+      <div class="field"><label>Data de volta</label><input type="date" id="data-volta" oninput="calc();showAgendaBtn()"></div>
     </div>
     <div class="grid-2">
       <div class="field"><label>Passageiros</label><input type="number" id="pax" value="1" min="1"></div>
       <div class="field"><label>Hóspedes</label><input type="number" id="hospedes" value="1" min="1"></div>
     </div>
+    <div id="agenda-status" style="display:none;margin-top:4px;padding:10px 14px;border-radius:8px;font-size:13px;line-height:1.5;border:0.5px solid var(--border-strong);background:var(--cream)"></div>
+    <button id="btn-agenda" onclick="verificarAgenda()" style="margin-top:8px;padding:8px 16px;border-radius:8px;border:0.5px solid var(--border-strong);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;color:var(--text-muted);display:none;transition:all .15s" onmouseover="this.style.background='var(--blush)';this.style.color='var(--deep)'" onmouseout="this.style.background='transparent';this.style.color='var(--text-muted)'">
+      📅 Verificar disponibilidade na agenda
+    </button>
   </div>
 
   <div class="card">
@@ -461,6 +471,81 @@ function excluirOrcamento(idx) {
   const lista = getHistorico(); lista.splice(idx,1);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
   renderHistory(); showToast('Orçamento removido.','');
+}
+
+function showAgendaBtn() {
+  const ida = document.getElementById('data-ida').value;
+  const btn = document.getElementById('btn-agenda');
+  if (ida) { btn.style.display = 'block'; }
+  else { btn.style.display = 'none'; document.getElementById('agenda-status').style.display = 'none'; }
+}
+
+async function verificarAgenda() {
+  const ida = document.getElementById('data-ida').value;
+  const volta = document.getElementById('data-volta').value;
+  if (!ida) { showToast('Informe a data de ida primeiro.', 'error'); return; }
+
+  const status = document.getElementById('agenda-status');
+  const btn = document.getElementById('btn-agenda');
+  status.style.display = 'block';
+  status.className = 'agenda-loading';
+  status.innerHTML = '⏳ Verificando agenda...';
+  btn.disabled = true;
+
+  try {
+    await fetch(SHEETS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'checkAgenda', data: { dataIda: ida, dataVolta: volta } })
+    });
+    // Como no-cors não retorna body, fazemos via iframe trick com GET
+    // Usamos JSONP via script tag para contornar CORS
+    verificarAgendaJSONP(ida, volta, status, btn);
+  } catch(err) {
+    verificarAgendaJSONP(ida, volta, status, btn);
+  }
+}
+
+function verificarAgendaJSONP(ida, volta, status, btn) {
+  const callbackName = 'agendaCb_' + Date.now();
+  const url = SHEETS_URL + '?callback=' + callbackName + '&action=checkAgenda&dataIda=' + encodeURIComponent(ida) + (volta ? '&dataVolta=' + encodeURIComponent(volta) : '');
+
+  window[callbackName] = function(res) {
+    btn.disabled = false;
+    if (!res || !res.ok) {
+      status.className = '';
+      status.style.background = 'var(--blush)';
+      status.innerHTML = '⚠️ Não foi possível consultar a agenda. Verifique a conexão.';
+      return;
+    }
+    if (res.ocupado) {
+      status.className = 'agenda-busy';
+      let html = '<strong>⚠️ Data com compromisso na agenda:</strong>';
+      res.eventos.forEach(ev => {
+        html += '<div class="agenda-event-item"><div class="agenda-event-title">' + ev.titulo + '</div><div class="agenda-event-time">' + (ev.diaInteiro ? 'Dia inteiro' : ev.inicio + ' até ' + ev.fim) + ' — ' + ev.calendario + '</div></div>';
+      });
+      status.innerHTML = html;
+    } else {
+      status.className = 'agenda-ok';
+      status.innerHTML = '✅ <strong>Data disponível</strong> — nenhum evento encontrado na agenda.';
+    }
+    delete window[callbackName];
+    const oldScript = document.getElementById('agenda-script-tag');
+    if (oldScript) oldScript.remove();
+  };
+
+  const script = document.createElement('script');
+  script.id = 'agenda-script-tag';
+  script.src = url;
+  script.onerror = function() {
+    btn.disabled = false;
+    status.className = '';
+    status.style.background = 'var(--blush)';
+    status.innerHTML = '⚠️ Não foi possível consultar a agenda. Verifique a conexão.';
+    delete window[callbackName];
+  };
+  document.head.appendChild(script);
 }
 
 function copiarOrcamento(idx) {
