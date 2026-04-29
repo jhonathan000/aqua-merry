@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orçamento de Deslocamento — Aqua Merry Atelier</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rose: #C9A99A; --deep: #5C3D35; --cream: #FAF6F1; --blush: #F0DDD6;
+    --warm-gold: #B8925A; --text: #2A1F1B; --text-muted: #7A6560;
+    --border: rgba(92,61,53,0.12); --border-strong: rgba(92,61,53,0.22);
+    --white: #FFFFFF; --shadow: 0 2px 20px rgba(92,61,53,0.08); --shadow-lg: 0 8px 40px rgba(92,61,53,0.12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; font-size: 14px; line-height: 1.6; }
+  .nav { background: var(--deep); display: flex; justify-content: center; gap: 4px; padding: .5rem 1rem; }
+  .nav-btn { padding: 7px 22px; border-radius: 20px; border: none; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; background: transparent; color: rgba(250,246,241,0.55); transition: all .18s; }
+  .nav-btn.active { background: rgba(201,169,154,0.22); color: var(--cream); }
+  .nav-btn:hover { color: var(--cream); }
+  .page { display: none; }
+  .page.active { display: block; }
+  header { background: var(--deep); padding: 2rem 1.5rem 1.25rem; text-align: center; position: relative; overflow: hidden; }
+  header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 50%, rgba(201,169,154,0.15) 0%, transparent 60%), radial-gradient(ellipse at 70% 50%, rgba(184,146,90,0.1) 0%, transparent 60%); pointer-events: none; }
+  .header-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; color: var(--rose); margin-bottom: .5rem; opacity: .85; }
+  header h1 { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: clamp(1.6rem, 4vw, 2.2rem); color: var(--cream); letter-spacing: .02em; }
+  header h1 em { font-style: italic; color: var(--rose); }
+  .header-sub { font-size: 12px; color: rgba(250,246,241,0.5); margin-top: .4rem; font-weight: 300; }
+  .container { max-width: 760px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+  .card { background: var(--white); border: 0.5px solid var(--border); border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: var(--shadow); animation: fadeUp .3s ease both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px) } to { opacity: 1; transform: translateY(0) } }
+  .card-title { font-size: 10px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--rose); margin-bottom: 1.1rem; display: flex; align-items: center; gap: 8px; }
+  .card-title::after { content: ''; flex: 1; height: 0.5px; background: var(--border); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  @media(max-width:540px) { .grid-2 { grid-template-columns: 1fr; } }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label { font-size: 11px; font-weight: 500; letter-spacing: .04em; color: var(--text-muted); text-transform: uppercase; }
+  .field input, .field select { padding: 9px 12px; border: 0.5px solid var(--border-strong); border-radius: 8px; background: var(--cream); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; transition: border-color .15s, box-shadow .15s; -webkit-appearance: none; appearance: none; width: 100%; }
+  .field input:focus, .field select:focus { outline: none; border-color: var(--rose); box-shadow: 0 0 0 3px rgba(201,169,154,0.15); background: var(--white); }
+  .field input::placeholder { color: rgba(122,101,96,0.4); }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.2rem; }
+  .tab { padding: 7px 16px; border-radius: 20px; border: 0.5px solid var(--border-strong); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; background: transparent; color: var(--text-muted); transition: all .18s; white-space: nowrap; }
+  .tab:hover { background: var(--blush); border-color: var(--rose); color: var(--deep); }
+  .tab.active { background: var(--deep); border-color: var(--deep); color: var(--cream); }
+  .search-label { font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; margin-top: 4px; display: block; }
+  .search-btns { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 1.1rem; }
+  .btn-site { display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; border-radius: 8px; border: 0.5px solid var(--border-strong); background: var(--cream); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 12px; cursor: pointer; transition: all .15s; white-space: nowrap; }
+  .btn-site svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 1.8; flex-shrink: 0; }
+  .btn-site:hover { background: var(--blush); border-color: var(--rose); color: var(--deep); transform: translateY(-1px); box-shadow: 0 2px 8px rgba(201,169,154,0.25); }
+  .tip { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; font-style: italic; }
+  .extras-list { display: flex; flex-direction: column; gap: 8px; }
+  .extra-item { display: grid; grid-template-columns: 1fr 110px 36px; gap: 8px; align-items: center; animation: fadeUp .2s ease both; }
+  .btn-add { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-top: 10px; padding: 9px; border: 0.5px dashed var(--border-strong); border-radius: 8px; background: transparent; color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all .15s; }
+  .btn-add:hover { background: var(--blush); border-color: var(--rose); color: var(--deep); }
+  .btn-remove { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border: none; border-radius: 8px; background: transparent; color: rgba(122,101,96,0.4); font-size: 18px; cursor: pointer; transition: all .15s; }
+  .btn-remove:hover { background: #fde8e8; color: #c0392b; }
+  .summary-card { background: var(--deep); border-radius: 14px; padding: 1.5rem; margin-top: 1rem; box-shadow: var(--shadow-lg); }
+  .summary-title { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 300; color: var(--rose); letter-spacing: .04em; margin-bottom: 1rem; }
+  .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 0.5px solid rgba(250,246,241,0.08); font-size: 13px; color: rgba(250,246,241,0.6); }
+  .summary-row:last-of-type { border-bottom: none; }
+  .summary-val { color: var(--cream); font-weight: 500; }
+  .summary-row.total { border-top: 0.5px solid rgba(201,169,154,0.3); margin-top: 6px; padding-top: 14px; font-size: 15px; color: var(--cream); font-weight: 500; }
+  .summary-row.total .summary-val { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 400; color: var(--warm-gold); }
+  .btns-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 1rem; }
+  .btn-action { padding: 11px; border-radius: 8px; border: 0.5px solid rgba(201,169,154,0.4); background: transparent; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; transition: all .18s; }
+  .btn-action svg { width: 14px; height: 14px; flex-shrink: 0; stroke: currentColor; fill: none; stroke-width: 2; }
+  .btn-copy { color: var(--rose); }
+  .btn-copy:hover { background: rgba(201,169,154,0.12); border-color: var(--rose); }
+  .btn-save { background: rgba(184,146,90,0.15); border-color: rgba(184,146,90,0.5); color: var(--warm-gold); }
+  .btn-save:hover { background: rgba(184,146,90,0.25); }
+  .btn-save:disabled { opacity: .45; cursor: not-allowed; }
+  .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--deep); color: var(--cream); padding: 10px 20px; border-radius: 20px; font-size: 13px; box-shadow: var(--shadow-lg); transition: transform .3s cubic-bezier(.34,1.56,.64,1); z-index: 999; white-space: nowrap; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { background: #2d6a4f; }
+  .toast.error { background: #9b2335; }
+  .note { font-size: 12px; color: var(--text-muted); margin-top: 6px; font-style: italic; }
+  .history-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 10px; }
+  .history-header h2 { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 1.4rem; color: var(--text); }
+  .btn-sheets { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; border: 0.5px solid var(--border-strong); background: var(--white); color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-size: 12px; cursor: pointer; transition: all .15s; text-decoration: none; }
+  .btn-sheets svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; flex-shrink: 0; }
+  .btn-sheets:hover { background: var(--blush); color: var(--deep); border-color: var(--rose); }
+  .history-empty { text-align: center; padding: 3rem 1rem; color: var(--text-muted); font-size: 14px; }
+  .history-empty svg { width: 40px; height: 40px; stroke: var(--border-strong); fill: none; stroke-width: 1.5; margin: 0 auto 1rem; display: block; }
+  .h-card { background: var(--white); border: 0.5px solid var(--border); border-radius: 12px; padding: 1.1rem 1.25rem; margin-bottom: .75rem; box-shadow: var(--shadow); cursor: pointer; transition: all .15s; animation: fadeUp .25s ease both; }
+  .h-card:hover { border-color: var(--rose); box-shadow: 0 4px 20px rgba(201,169,154,0.2); }
+  .h-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .h-card-title { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-weight: 400; color: var(--text); }
+  .h-card-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .h-card-total { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; color: var(--warm-gold); font-weight: 400; white-space: nowrap; }
+  .h-card-date { font-size: 11px; color: rgba(122,101,96,0.55); margin-top: 8px; }
+  .h-card-detail { display: none; margin-top: 10px; padding-top: 10px; border-top: 0.5px solid var(--border); font-size: 13px; color: var(--text-muted); }
+  .h-card-detail.open { display: block; }
+  .h-detail-row { display: flex; justify-content: space-between; padding: 3px 0; }
+  .h-card-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .h-btn { padding: 6px 14px; border-radius: 6px; border: 0.5px solid var(--border-strong); background: transparent; font-family: 'DM Sans', sans-serif; font-size: 12px; cursor: pointer; color: var(--text-muted); transition: all .15s; }
+  .h-btn:hover { background: var(--blush); color: var(--deep); border-color: var(--rose); }
+  .h-btn.danger:hover { background: #fde8e8; color: #c0392b; border-color: #c0392b; }
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 11px; font-weight: 500; }
+  .badge-transport { background: rgba(201,169,154,0.15); color: var(--rose); }
+  footer { text-align: center; padding: 2rem 1rem; font-size: 11px; color: var(--text-muted); opacity: .6; letter-spacing: .06em; }
+  footer span { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 13px; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="header-eyebrow">Aqua Merry Atelier</p>
+  <h1>Calculadora de <em>deslocamento</em></h1>
+  <p class="header-sub">Orçamento de transporte, hospedagem e custos extras</p>
+</header>
+
+<div class="nav">
+  <button class="nav-btn active" onclick="showPage('calc',this)">Novo orçamento</button>
+  <button class="nav-btn" onclick="showPage('hist',this)">Histórico</button>
+</div>
+
+<!-- CALCULADORA -->
+<div id="page-calc" class="page active">
+<div class="container">
+
+  <div class="card">
+    <p class="card-title">Identificação do orçamento</p>
+    <div class="grid-2">
+      <div class="field"><label>Nome do cliente</label><input type="text" id="cliente" placeholder="ex: Ana e Pedro"></div>
+      <div class="field"><label>Evento / tipo</label><input type="text" id="evento" placeholder="ex: Casamento, Aniversário"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Rota e datas</p>
+    <div class="grid-2">
+      <div class="field"><label>Origem</label><input type="text" id="origem" placeholder="ex: Curitiba"></div>
+      <div class="field"><label>Destino</label><input type="text" id="destino" placeholder="ex: São Paulo"></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>Data de ida</label><input type="date" id="data-ida" oninput="calc()"></div>
+      <div class="field"><label>Data de volta</label><input type="date" id="data-volta" oninput="calc()"></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>Passageiros</label><input type="number" id="pax" value="1" min="1"></div>
+      <div class="field"><label>Hóspedes</label><input type="number" id="hospedes" value="1" min="1"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Transporte</p>
+    <div class="tabs">
+      <button class="tab active" onclick="setTransporte('aerea',this)">✈ Aérea</button>
+      <button class="tab" onclick="setTransporte('rodoviaria',this)">🚌 Rodoviária</button>
+      <button class="tab" onclick="setTransporte('gasolina',this)">🚗 Carro próprio</button>
+      <button class="tab" onclick="setTransporte('nenhum',this)">— Sem deslocamento</button>
+    </div>
+
+    <div id="t-aerea">
+      <span class="search-label">Buscar passagens aéreas</span>
+      <div class="search-btns">
+        <button class="btn-site" onclick="abrirLink('gflights')"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>Google Flights</button>
+        <button class="btn-site" onclick="abrirLink('decolar')"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>Decolar</button>
+        <button class="btn-site" onclick="abrirLink('kayak-voo')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>Kayak</button>
+        <button class="btn-site" onclick="abrirLink('maxmilhas')"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>MaxMilhas</button>
+        <button class="btn-site" onclick="abrirLink('passagens-promo')"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Passagens Promo</button>
+      </div>
+      <p class="tip">Pesquise, encontre o melhor preço e insira abaixo.</p>
+      <div class="grid-2">
+        <div class="field"><label>Passagem ida (R$)</label><input type="number" id="ae-ida" placeholder="0,00" oninput="calc()"></div>
+        <div class="field"><label>Passagem volta (R$)</label><input type="number" id="ae-volta" placeholder="0,00" oninput="calc()"></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>Bagagem / taxas (R$)</label><input type="number" id="ae-taxa" placeholder="0,00" oninput="calc()"></div>
+        <div class="field"><label>Transfer aeroporto (R$)</label><input type="number" id="ae-transfer" placeholder="0,00" oninput="calc()"></div>
+      </div>
+    </div>
+
+    <div id="t-rodoviaria" class="hidden">
+      <span class="search-label">Buscar passagens de ônibus</span>
+      <div class="search-btns">
+        <button class="btn-site" onclick="abrirLink('clickbus')"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-4 0v2M12 12v3M8 12v3"/></svg>ClickBus</button>
+        <button class="btn-site" onclick="abrirLink('buser')"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M2 12h20M7 21v1M17 21v1"/></svg>Buser</button>
+        <button class="btn-site" onclick="abrirLink('kayak-onibus')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>Kayak Ônibus</button>
+      </div>
+      <p class="tip">Pesquise e insira abaixo.</p>
+      <div class="grid-2">
+        <div class="field"><label>Passagem ida (R$)</label><input type="number" id="ro-ida" placeholder="0,00" oninput="calc()"></div>
+        <div class="field"><label>Passagem volta (R$)</label><input type="number" id="ro-volta" placeholder="0,00" oninput="calc()"></div>
+      </div>
+    </div>
+
+    <div id="t-gasolina" class="hidden">
+      <div class="grid-2">
+        <div class="field"><label>Distância total (km)</label><input type="number" id="g-km" placeholder="ex: 300" oninput="calc()"></div>
+        <div class="field"><label>Consumo do carro (km/l)</label><input type="number" id="g-consumo" placeholder="ex: 12" oninput="calc()"></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>Preço gasolina (R$/l)</label><input type="number" id="g-preco" placeholder="ex: 6,20" step="0.01" oninput="calc()"></div>
+        <div class="field"><label>Pedágios estimados (R$)</label><input type="number" id="g-pedagio" placeholder="0,00" oninput="calc()"></div>
+      </div>
+      <p class="note" id="g-resultado"></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Hospedagem</p>
+    <span class="search-label">Buscar hospedagem com desconto</span>
+    <div class="search-btns">
+      <button class="btn-site" onclick="abrirLink('booking')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Booking.com</button>
+      <button class="btn-site" onclick="abrirLink('airbnb')"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>Airbnb</button>
+      <button class="btn-site" onclick="abrirLink('hoteis')"><svg viewBox="0 0 24 24"><path d="M2 20h20M4 20V8l8-6 8 6v12"/><rect x="9" y="12" width="6" height="8"/></svg>Hotels.com</button>
+      <button class="btn-site" onclick="abrirLink('trivago')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>Trivago</button>
+    </div>
+    <p class="tip">Pesquise e insira abaixo.</p>
+    <div class="grid-2">
+      <div class="field"><label>Valor por noite (R$)</label><input type="number" id="h-noite" placeholder="0,00" oninput="calc()"></div>
+      <div class="field"><label>Número de noites</label><input type="number" id="h-noites" placeholder="1" min="0" oninput="calc()"></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>Alimentação / diárias (R$)</label><input type="number" id="h-alim" placeholder="0,00" oninput="calc()"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Outros custos</p>
+    <div class="extras-list" id="extras-list"></div>
+    <button class="btn-add" onclick="addExtra()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Adicionar custo
+    </button>
+  </div>
+
+  <div class="summary-card">
+    <p class="summary-title">Resumo do orçamento</p>
+    <div class="summary-row"><span>Transporte</span><span class="summary-val" id="s-transporte">R$ 0,00</span></div>
+    <div class="summary-row"><span>Hospedagem</span><span class="summary-val" id="s-hospedagem">R$ 0,00</span></div>
+    <div class="summary-row"><span>Alimentação</span><span class="summary-val" id="s-alimentacao">R$ 0,00</span></div>
+    <div class="summary-row" id="s-extras-row" style="display:none"><span>Outros custos</span><span class="summary-val" id="s-extras">R$ 0,00</span></div>
+    <div class="summary-row total"><span>Total estimado</span><span class="summary-val" id="s-total">R$ 0,00</span></div>
+    <div class="btns-row">
+      <button class="btn-action btn-copy" onclick="copiar()">
+        <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        Copiar resumo
+      </button>
+      <button class="btn-action btn-save" id="btn-salvar" onclick="salvarNoSheets()">
+        <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Salvar orçamento
+      </button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- HISTÓRICO -->
+<div id="page-hist" class="page">
+<div class="container">
+  <div class="history-header">
+    <h2>Orçamentos salvos</h2>
+    <a href="https://docs.google.com/spreadsheets" target="_blank" class="btn-sheets">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Abrir planilha completa
+    </a>
+  </div>
+  <div id="history-list"></div>
+</div>
+</div>
+
+<footer><span>Aqua Merry Atelier</span> — uso interno</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwvKzGsScxr5J97QJykG8Vk70BJiaufU6Ezf31G5jwbkvqsSrineeHvIMuRejjb0rw2NQ/exec';
+const STORAGE_KEY = 'aqm_orcamentos';
+let tipoTransporte = 'aerea';
+let extras = [];
+let extraId = 0;
+
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'hist') renderHistory();
+}
+
+function v(id) { return parseFloat(document.getElementById(id)?.value) || 0; }
+function fmt(n) { return 'R$ ' + n.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+function fmtData(str) { if (!str) return ''; const [y, m, d] = str.split('-'); return d + '/' + m + '/' + y; }
+
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type ? ' ' + type : '');
+  void t.offsetWidth;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function setTransporte(tipo, el) {
+  tipoTransporte = tipo;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  ['t-aerea','t-rodoviaria','t-gasolina'].forEach(id => document.getElementById(id).classList.add('hidden'));
+  if (tipo !== 'nenhum') document.getElementById('t-' + tipo).classList.remove('hidden');
+  calc();
+}
+
+function getNoites() {
+  const ida = document.getElementById('data-ida').value;
+  const volta = document.getElementById('data-volta').value;
+  if (ida && volta) { const d = (new Date(volta) - new Date(ida)) / 86400000; return d > 0 ? d : (v('h-noites') || 1); }
+  return v('h-noites') || 1;
+}
+
+function calc() {
+  let transporte = 0;
+  if (tipoTransporte === 'aerea') transporte = v('ae-ida') + v('ae-volta') + v('ae-taxa') + v('ae-transfer');
+  else if (tipoTransporte === 'rodoviaria') transporte = v('ro-ida') + v('ro-volta');
+  else if (tipoTransporte === 'gasolina') {
+    const km = v('g-km'), c = v('g-consumo'), p = v('g-preco'), ped = v('g-pedagio');
+    const comb = c > 0 ? (km / c) * p : 0;
+    transporte = comb + ped;
+    const el = document.getElementById('g-resultado');
+    if (el) el.textContent = c > 0 && km > 0 ? 'Combustível: ' + fmt(comb) + ' (' + km + 'km ÷ ' + c + 'km/l × R$' + p.toFixed(2) + '/l)' : '';
+  }
+  const hospedagem = v('h-noite') * getNoites();
+  const alimentacao = v('h-alim');
+  let extrasTotal = 0;
+  extras.forEach(e => { extrasTotal += parseFloat(document.getElementById('extra-val-' + e.id)?.value) || 0; });
+  const total = transporte + hospedagem + alimentacao + extrasTotal;
+  document.getElementById('s-transporte').textContent = fmt(transporte);
+  document.getElementById('s-hospedagem').textContent = fmt(hospedagem);
+  document.getElementById('s-alimentacao').textContent = fmt(alimentacao);
+  document.getElementById('s-extras').textContent = fmt(extrasTotal);
+  document.getElementById('s-total').textContent = fmt(total);
+  document.getElementById('s-extras-row').style.display = extras.length > 0 ? 'flex' : 'none';
+}
+
+function addExtra() { extraId++; extras.push({ id: extraId }); renderExtras(); calc(); }
+function removeExtra(id) { extras = extras.filter(e => e.id !== id); renderExtras(); calc(); }
+function renderExtras() {
+  const list = document.getElementById('extras-list');
+  list.innerHTML = '';
+  extras.forEach(e => {
+    const div = document.createElement('div');
+    div.className = 'extra-item';
+    div.innerHTML = `<input type="text" id="extra-nome-${e.id}" placeholder="Descrição (ex: figurino, frete)" style="padding:9px 12px;border:0.5px solid var(--border-strong);border-radius:8px;background:var(--cream);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;width:100%" oninput="calc()"><input type="number" id="extra-val-${e.id}" placeholder="R$" style="padding:9px 12px;border:0.5px solid var(--border-strong);border-radius:8px;background:var(--cream);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;width:100%" oninput="calc()"><button class="btn-remove" onclick="removeExtra(${e.id})">×</button>`;
+    list.appendChild(div);
+  });
+}
+
+function abrirLink(tipo) {
+  const orig = document.getElementById('origem').value.trim();
+  const dest = document.getElementById('destino').value.trim();
+  const ida = document.getElementById('data-ida').value || '';
+  const volta = document.getElementById('data-volta').value || '';
+  const pax = document.getElementById('pax').value || '1';
+  const hospedes = document.getElementById('hospedes').value || '1';
+  const enc = s => encodeURIComponent(s);
+  const slug = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+  const noites = (ida && volta) ? Math.max(1,(new Date(volta)-new Date(ida))/86400000) : 1;
+  const checkout = volta || (ida ? (() => { const d=new Date(ida); d.setDate(d.getDate()+noites); return d.toISOString().split('T')[0]; })() : '');
+  const iataMap = {'curitiba':'CWB','sao paulo':'GRU','são paulo':'GRU','campinas':'VCP','rio de janeiro':'GIG','brasilia':'BSB','brasília':'BSB','salvador':'SSA','florianopolis':'FLN','florianópolis':'FLN','porto alegre':'POA','belo horizonte':'CNF','fortaleza':'FOR','recife':'REC','manaus':'MAO','belem':'BEL','belém':'BEL','goiania':'GYN','goiânia':'GYN','maceio':'MCZ','maceió':'MCZ','natal':'NAT','joao pessoa':'JPA','joão pessoa':'JPA','vitoria':'VIX','vitória':'VIX','londrina':'LDB','maringa':'MGF','maringá':'MGF','foz do iguacu':'IGU','foz do iguaçu':'IGU'};
+  const iata = s => iataMap[s.toLowerCase()] || s.toUpperCase().substring(0,3) || 'CWB';
+  const oI=iata(orig), dI=iata(dest), dS=slug(dest)||'sao-paulo', oS=slug(orig)||'curitiba';
+  const urls = {
+    'gflights':`https://www.google.com/travel/flights/search?hl=pt-BR&curr=BRL#flt=${oI}.${dI}.${ida}${volta?'*'+dI+'.'+oI+'.'+volta:''};c:BRL;e:1;sd:1;t:f`,
+    'kayak-voo':`https://www.kayak.com.br/flights/${oI}-${dI}/${ida}/${volta||''}/${pax}adults`,
+    'decolar':`https://www.decolar.com/shop/flights/results/ROUND_TRIP/${oI}/${dI}/${ida}/${volta}/${pax}/0/0?from=SB`,
+    'maxmilhas':`https://www.maxmilhas.com.br/passagens-aereas/pesquisa/${oI}/${dI}/${ida}/${volta}?adults=${pax}&tripType=RT`,
+    'passagens-promo':`https://www.passagenspromo.com.br/passagens-aereas/de-${oS}-para-${dS}`,
+    'clickbus':`https://www.clickbus.com.br/${oS}/${dS}/?departureDate=${ida}`,
+    'buser':`https://app.buser.com.br/passagem-de-onibus/${oS}/${dS}?data=${ida}`,
+    'kayak-onibus':`https://www.kayak.com.br/bus/${oI}/${dI}/${ida}`,
+    'booking':`https://www.booking.com/searchresults.pt-br.html?ss=${enc(dest)}&checkin=${ida}&checkout=${checkout}&group_adults=${hospedes}&no_rooms=1&group_children=0&order=price`,
+    'airbnb':`https://www.airbnb.com.br/s/${enc(dest)}/homes?checkin=${ida}&checkout=${checkout}&adults=${hospedes}&tab_id=home_tab`,
+    'hoteis':`https://pt.hotels.com/search.do?q-destination=${enc(dest)}&q-check-in=${ida}&q-check-out=${checkout}&q-rooms=1&q-adults=${hospedes}`,
+    'trivago':`https://www.trivago.com.br/?query=${enc(dest)}&checkin=${ida}&checkout=${checkout}&adults=${hospedes}&rooms=1`,
+  };
+  if (urls[tipo]) window.open(urls[tipo], '_blank');
+}
+
+function getOrcamento() {
+  const extrasArr = extras.map(e => ({ nome: document.getElementById('extra-nome-'+e.id)?.value||'Extra', valor: parseFloat(document.getElementById('extra-val-'+e.id)?.value)||0 }));
+  const extrasTotal = extrasArr.reduce((s,e) => s+e.valor, 0);
+  const ida = document.getElementById('data-ida').value;
+  const volta = document.getElementById('data-volta').value;
+  let transporte = 0;
+  if (tipoTransporte==='aerea') transporte=v('ae-ida')+v('ae-volta')+v('ae-taxa')+v('ae-transfer');
+  else if (tipoTransporte==='rodoviaria') transporte=v('ro-ida')+v('ro-volta');
+  else if (tipoTransporte==='gasolina') { const km=v('g-km'),c=v('g-consumo'),p=v('g-preco'); transporte=(c>0?(km/c)*p:0)+v('g-pedagio'); }
+  const hospedagem = v('h-noite') * getNoites();
+  const alimentacao = v('h-alim');
+  const total = transporte + hospedagem + alimentacao + extrasTotal;
+  return { id: Date.now(), criadoEm: new Date().toISOString(), cliente: document.getElementById('cliente').value, evento: document.getElementById('evento').value, origem: document.getElementById('origem').value, destino: document.getElementById('destino').value, dataIda: ida, dataVolta: volta, tipoTransporte, transporte: +transporte.toFixed(2), hospedagem: +hospedagem.toFixed(2), alimentacao: +alimentacao.toFixed(2), extras: extrasArr, extrasTotal: +extrasTotal.toFixed(2), total: +total.toFixed(2), rota: (document.getElementById('origem').value||'?')+' → '+(document.getElementById('destino').value||'?') };
+}
+
+function salvarLocal(orc) {
+  const lista = JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
+  lista.unshift(orc);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
+}
+
+async function salvarNoSheets() {
+  const orc = getOrcamento();
+  if (!orc.total) { showToast('Preencha ao menos um valor antes de salvar.', 'error'); return; }
+  const btn = document.getElementById('btn-salvar');
+  btn.disabled = true;
+  btn.textContent = 'Salvando...';
+  salvarLocal(orc);
+  try {
+    await fetch(SHEETS_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ cliente:orc.cliente, evento:orc.evento, rota:orc.rota, dataIda:fmtData(orc.dataIda), dataVolta:fmtData(orc.dataVolta), tipoTransporte:orc.tipoTransporte, transporte:orc.transporte, hospedagem:orc.hospedagem, alimentacao:orc.alimentacao, extras:orc.extrasTotal, total:orc.total, detalhesExtras:orc.extras.map(e=>e.nome+': R$'+e.valor.toFixed(2)).join(' | ') }) });
+    showToast('Orçamento salvo na planilha!', 'success');
+  } catch(err) {
+    showToast('Salvo localmente. Verifique a conexão.', 'error');
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar orçamento';
+}
+
+function copiar() {
+  const orc = getOrcamento();
+  let linhas = ['ORÇAMENTO DE DESLOCAMENTO — AQUA MERRY ATELIER','─'.repeat(46)];
+  if (orc.cliente) linhas.push('CLIENTE: '+orc.cliente);
+  if (orc.evento) linhas.push('EVENTO: '+orc.evento);
+  linhas.push('ROTA: '+orc.rota);
+  if (orc.dataIda) linhas.push('IDA: '+fmtData(orc.dataIda)+(orc.dataVolta?' | VOLTA: '+fmtData(orc.dataVolta):''));
+  linhas.push('');
+  linhas.push('TRANSPORTE:   '+fmt(orc.transporte));
+  linhas.push('HOSPEDAGEM:   '+fmt(orc.hospedagem));
+  linhas.push('ALIMENTAÇÃO:  '+fmt(orc.alimentacao));
+  orc.extras.forEach(e => linhas.push(e.nome.toUpperCase().padEnd(14)+fmt(e.valor)));
+  linhas.push('─'.repeat(46));
+  linhas.push('TOTAL:        '+fmt(orc.total));
+  navigator.clipboard.writeText(linhas.join('\n')).then(()=>showToast('Resumo copiado!','success')).catch(()=>showToast('Erro ao copiar.','error'));
+}
+
+function getHistorico() { return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }
+
+function renderHistory() {
+  const lista = getHistorico();
+  const container = document.getElementById('history-list');
+  if (!lista.length) {
+    container.innerHTML = '<div class="history-empty"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Nenhum orçamento salvo ainda.<br><small style="margin-top:6px;display:block">Crie um orçamento e clique em "Salvar orçamento".</small></div>';
+    return;
+  }
+  container.innerHTML = '';
+  const tLabel = {aerea:'✈ Aérea',rodoviaria:'🚌 Rodoviária',gasolina:'🚗 Carro próprio',nenhum:'— Sem deslocamento'};
+  lista.forEach((orc, idx) => {
+    const data = new Date(orc.criadoEm).toLocaleString('pt-BR');
+    const extrasRows = orc.extras&&orc.extras.length ? orc.extras.map(e=>`<div class="h-detail-row"><span>${e.nome}</span><span>${fmt(e.valor)}</span></div>`).join('') : '';
+    const card = document.createElement('div');
+    card.className = 'h-card';
+    card.innerHTML = `<div class="h-card-top" onclick="toggleDetail(${idx})"><div><div class="h-card-title">${orc.cliente||'Sem nome'}${orc.evento?' · '+orc.evento:''}</div><div class="h-card-sub">${orc.rota||''}${orc.dataIda?' · '+fmtData(orc.dataIda):''}</div></div><div style="text-align:right"><div class="h-card-total">${fmt(orc.total)}</div><span class="badge badge-transport">${tLabel[orc.tipoTransporte]||''}</span></div></div><div class="h-card-detail" id="detail-${idx}"><div class="h-detail-row"><span>Transporte</span><span>${fmt(orc.transporte)}</span></div><div class="h-detail-row"><span>Hospedagem</span><span>${fmt(orc.hospedagem)}</span></div><div class="h-detail-row"><span>Alimentação</span><span>${fmt(orc.alimentacao)}</span></div>${extrasRows}<div class="h-card-actions"><button class="h-btn" onclick="copiarOrcamento(${idx})">Copiar texto</button><button class="h-btn danger" onclick="excluirOrcamento(${idx})">Excluir</button></div></div><div class="h-card-date">Salvo em ${data}</div>`;
+    container.appendChild(card);
+  });
+}
+
+function toggleDetail(idx) { document.getElementById('detail-'+idx).classList.toggle('open'); }
+
+function excluirOrcamento(idx) {
+  if (!confirm('Excluir este orçamento do histórico local?')) return;
+  const lista = getHistorico(); lista.splice(idx,1);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
+  renderHistory(); showToast('Orçamento removido.','');
+}
+
+function copiarOrcamento(idx) {
+  const orc = getHistorico()[idx]; if (!orc) return;
+  let linhas = ['ORÇAMENTO DE DESLOCAMENTO — AQUA MERRY ATELIER','─'.repeat(46)];
+  if (orc.cliente) linhas.push('CLIENTE: '+orc.cliente);
+  if (orc.evento) linhas.push('EVENTO: '+orc.evento);
+  linhas.push('ROTA: '+orc.rota);
+  if (orc.dataIda) linhas.push('IDA: '+fmtData(orc.dataIda)+(orc.dataVolta?' | VOLTA: '+fmtData(orc.dataVolta):''));
+  linhas.push('');
+  linhas.push('TRANSPORTE:   '+fmt(orc.transporte));
+  linhas.push('HOSPEDAGEM:   '+fmt(orc.hospedagem));
+  linhas.push('ALIMENTAÇÃO:  '+fmt(orc.alimentacao));
+  if (orc.extras) orc.extras.forEach(e=>linhas.push(e.nome.toUpperCase().padEnd(14)+fmt(e.valor)));
+  linhas.push('─'.repeat(46));
+  linhas.push('TOTAL:        '+fmt(orc.total));
+  navigator.clipboard.writeText(linhas.join('\n')).then(()=>showToast('Copiado!','success')).catch(()=>showToast('Erro.','error'));
+}
+</script>
+</body>
+</html>
