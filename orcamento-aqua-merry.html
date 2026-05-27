@@ -125,7 +125,7 @@ footer span { font-family: 'Cormorant Garamond', serif; font-style: italic; font
 <p class="card-title">Identificação do orçamento</p>
 <div class="grid-2">
 <div class="field"><label>Nome do cliente</label><input type="text" id="cliente" placeholder="ex: Ana e Pedro"></div>
-<div class="field"><label>Evento / tipo</label><input type="text" id="evento" placeholder="ex: Casamento, Aniversário"></div>
+<div class="field"><label>Evento</label><select id="evento" onchange="atualizarTipos()"><option value="">Selecione...</option><option value="Casamento">Casamento</option><option value="Aniversário">Aniversário</option><option value="Empresarial">Empresarial</option><option value="Outro">Outro</option></select></div></div><div class="grid-2"><div class="field"><label>Tipo</label><select id="tipo-evento"><option value="">Selecione o evento primeiro</option></select></div><div class="field" style="visibility:hidden"></div>
 </div>
 <div class="grid-2">
 <div class="field"><label>Contato do cliente</label><input type="text" id="contato" placeholder="ex: (41) 99999-9999 ou @instagram"></div>
@@ -445,6 +445,23 @@ if (!confirm('Excluir este orçamento do histórico local?')) return;
 const lista = getHistorico(); lista.splice(idx,1);
 localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
 renderHistory(); showToast('Orçamento removido.','');
+}
+function atualizarTipos() {
+  const evento = document.getElementById('evento').value;
+  const tipoSelect = document.getElementById('tipo-evento');
+  const opcoes = {
+    'Casamento': ['Aquarela dos noivos', 'Aquarela dos convidados', 'Aquarela da mesa de bolo', 'Aquarela do buque', 'Outro'],
+    'Aniversário': ['Aquarela dos convidados', 'Aquarela do aniversariante', 'Aquarela tematica', 'Outro'],
+    'Empresarial': ['Aquarela dos participantes', 'Aquarela do espaco', 'Aquarela corporativa', 'Outro'],
+    'Outro': ['Aquarela personalizada', 'Outro']
+  };
+  tipoSelect.innerHTML = '';
+  if (!evento || !opcoes[evento]) {
+    tipoSelect.innerHTML = '<option value="">Selecione o evento primeiro</option>';
+    return;
+  }
+  tipoSelect.innerHTML = '<option value="">Selecione o tipo...</option>' +
+    opcoes[evento].map(function(o){ return '<option value="'+o+'">'+o+'</option>'; }).join('');
 }
 function showAgendaBtn() {
 const ida = document.getElementById('data-ida').value;
