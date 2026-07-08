@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-wihdth, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Aqua Merry Atelier | Julliane | Aquarela & Pintura ao Vivo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -694,13 +694,9 @@
       .form-row { grid-template-columns: 1fr; }
     }
 
-    /* ── GALLERY ITEMS (using emoji + gradients as placeholders) ── */
-    .gallery-a { aspect-ratio: 4/5; }
-    .gallery-b { aspect-ratio: 3/4; }
-    .gallery-c { aspect-ratio: 1/1; }
-    .gallery-d { aspect-ratio: 3/5; }
-    .gallery-e { aspect-ratio: 4/3; }
-    .gallery-f { aspect-ratio: 2/3; }
+    /* ── GALLERY ITEMS ── */
+    /* aspect-ratio removido: com CSS columns, cada item ocupa a altura natural da foto */
+    .masonry-item img { height: auto; }
 
     .g1 { background: linear-gradient(145deg, #f2d4c8 0%, #e8b5a2 50%, #d4a08c 100%); }
     .g2 { background: linear-gradient(145deg, #d4c5e2 0%, #c4b0d5 50%, #b59dc8 100%); }
