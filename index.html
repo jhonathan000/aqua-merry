@@ -709,6 +709,107 @@
       font-size: 3.5rem;
       opacity: 0.4;
     }
+
+    /* ── VIDEO SHOWCASE (Gas Rocket style) ──────────────────────────────── */
+    .video-section {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+    }
+    .video-section-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 7;
+      overflow: hidden;
+      background: var(--deep);
+    }
+    .video-section-wrap video,
+    .video-section-poster {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 1.2s cubic-bezier(0.16,1,0.3,1);
+    }
+    .video-section:hover .video-section-poster,
+    .video-section:hover video { transform: scale(1.03); }
+    .video-section-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(74,55,40,0.12) 0%,
+        rgba(74,55,40,0.04) 35%,
+        rgba(74,55,40,0.82) 100%
+      );
+      pointer-events: none;
+    }
+    .video-section-content {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 2.5rem 8vw 3.5rem;
+      z-index: 2;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+    .vs-eyebrow {
+      display: block;
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--dusty-peach);
+      margin-bottom: 0.7rem;
+    }
+    .vs-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 4.5vw, 4rem);
+      font-weight: 300;
+      line-height: 1.06;
+      color: var(--cream);
+      margin-bottom: 0.9rem;
+    }
+    .vs-heading em { font-style: italic; color: var(--dusty-peach); }
+    .vs-body {
+      font-size: 0.88rem;
+      line-height: 1.75;
+      color: rgba(250,246,241,0.68);
+      max-width: 440px;
+      margin-bottom: 1.6rem;
+    }
+    .vs-link {
+      display: inline-block;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--dusty-peach);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(232,201,184,0.45);
+      padding-bottom: 2px;
+      transition: color 0.25s, border-color 0.25s;
+    }
+    .vs-link:hover { color: white; border-color: white; }
+    .vs-btn {
+      flex-shrink: 0;
+      display: inline-block;
+      padding: 0.85rem 2rem;
+      border: 1px solid rgba(250,246,241,0.35);
+      color: var(--cream);
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 50px;
+      transition: all 0.25s;
+      white-space: nowrap;
+    }
+    .vs-btn:hover { background: var(--warm-gold); border-color: var(--warm-gold); color: white; }
+    @media (max-width: 768px) {
+      .video-section-wrap { aspect-ratio: 4/5; }
+      .video-section-content { flex-direction: column; align-items: flex-start; padding: 1.5rem 6vw 2rem; }
+    }
   </style>
 </head>
 <body>
@@ -942,6 +1043,30 @@
     </div>
   </section>
 
+
+  <!-- VIDEO SHOWCASE 1 — Pintura ao Vivo -->
+  <section class="video-section">
+    <div class="video-section-wrap">
+      <video autoplay muted loop playsinline
+             poster="https://raw.githubusercontent.com/jhonathan000/aqua-merry/main/7.jpeg">
+        <source src="videos/ao-vivo.mp4" type="video/mp4">
+        <img class="video-section-poster"
+             src="https://raw.githubusercontent.com/jhonathan000/aqua-merry/main/7.jpeg"
+             alt="Pintura ao vivo">
+      </video>
+      <div class="video-section-overlay"></div>
+      <div class="video-section-content">
+        <div>
+          <span class="vs-eyebrow">✦ Pintura ao Vivo</span>
+          <h2 class="vs-heading">Uma obra nasce<br><em>diante de todos.</em></h2>
+          <p class="vs-body">Julliane pinta durante o evento enquanto convidados acompanham cada pincelada com emoção e encantamento.</p>
+          <a href="#contato" class="vs-link">Quero no meu evento →</a>
+        </div>
+        <a href="#servicos" class="vs-btn">Ver serviços</a>
+      </div>
+    </div>
+  </section>
+
   <!-- PORTFOLIO -->
   <section id="portfolio">
     <div class="portfolio-header reveal">
@@ -995,6 +1120,30 @@
       <div class="masonry-item gallery-d">
         <img src="https://raw.githubusercontent.com/jhonathan000/aqua-merry/main/13.jpeg" alt="Obra em aquarela" style="width:100%;height:auto;display:block;">
         <div class="masonry-overlay"><span>Aquarela personalizada</span></div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- VIDEO SHOWCASE 2 — Obras Personalizadas -->
+  <section class="video-section">
+    <div class="video-section-wrap">
+      <video autoplay muted loop playsinline
+             poster="https://raw.githubusercontent.com/jhonathan000/aqua-merry/main/9.jpeg">
+        <source src="videos/obras.mp4" type="video/mp4">
+        <img class="video-section-poster"
+             src="https://raw.githubusercontent.com/jhonathan000/aqua-merry/main/9.jpeg"
+             alt="Obras personalizadas">
+      </video>
+      <div class="video-section-overlay"></div>
+      <div class="video-section-content">
+        <div>
+          <span class="vs-eyebrow">✦ Obras Personalizadas</span>
+          <h2 class="vs-heading">Arte feita para<br><em>durar para sempre.</em></h2>
+          <p class="vs-body">Traço a traço, cada obra nasce com cuidado artesanal e sensibilidade única. Um presente que conta uma história.</p>
+          <a href="#contato" class="vs-link">Solicitar encomenda →</a>
+        </div>
+        <a href="#portfolio" class="vs-btn">Ver portfólio</a>
       </div>
     </div>
   </section>
